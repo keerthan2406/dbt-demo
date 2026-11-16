@@ -1,0 +1,6 @@
+store_id,store_name,city,country_code,open_date,manager_name
+S001,Downtown Flagship,Bengaluru,IN,2019-03-01,Asha Rao
+S002,Mall Outlet,Mumbai,IN,2020-07-15,Vikram Shah
+S003,Airport Kiosk,Delhi,IN,2021-01-10,
+S004,Harbor Store,Singapore,SG,2022-05-20,Wei Lim
+S005,Online Warehouse,Hyderabad,IN,2018-11-01,Kiran Reddy

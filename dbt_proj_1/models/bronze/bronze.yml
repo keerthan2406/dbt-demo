@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: bronze
+    database: "{{target.catalog}}"
+    schema: bronze
+    tables:
+      - name: customers
+      - name: orders
+      - name: order_items
+      - name : products
+      - name : stores
