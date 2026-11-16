@@ -1,0 +1,19 @@
+resources:
+  jobs:
+    load_bronze_job:
+      name: dbt_poc_load_bronze
+      max_concurrent_runs: 1
+
+      parameters:
+        - name: load_date
+          default: ""          # blank = today
+
+      tasks:
+        - task_key: load_bronze
+          notebook_task:
+            notebook_path: ../src/01_load_raw.py
+            base_parameters:
+              load_date: "{{job.parameters.load_date}}"
+              catalog: ${var.catalog}
+              control_schema: ${var.control_schema}
+              bronze_schema: ${var.bronze_schema}

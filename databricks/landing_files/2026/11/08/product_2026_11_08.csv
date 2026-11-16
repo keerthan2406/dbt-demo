@@ -1,0 +1,16 @@
+product_id,product_name,category,unit_price,unit_cost,updated_at
+P001,Wireless Mouse,Electronics,799,420,2026-10-01
+P002,Mechanical Keyboard,Electronics,3499,2100,2026-10-01
+P003,  usb-c hub ,Electronics,1999,1100,2026-10-01
+P004,Laptop Stand,Accessories,1299,650,2026-10-01
+P005,Notebook A5,Stationery,149,60,2026-10-01
+P006,Gel Pen Pack,Stationery,99,,2026-10-01
+P007,Desk Lamp,Home Office,1599,800,2026-10-01
+P008,Office Chair,Home Office,8999,5200,2026-10-01
+P009,Water Bottle,Lifestyle,499,180,2026-10-01
+P010,Backpack,Lifestyle,2499,1300,2026-10-01
+P011,Webcam HD,Electronics,2799,1600,2026-10-01
+P012,Monitor Arm,Home Office,3299,1900,2026-10-01
+P013,Sticky Notes,Stationery,79,25,2026-10-01
+P014,Cable Organizer,,299,90,2026-10-01
+P015,Phone Stand,Accessories,399,,2026-10-01

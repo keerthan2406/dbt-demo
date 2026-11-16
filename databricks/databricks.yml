@@ -1,0 +1,50 @@
+bundle:
+  name: dbt_poc_load_bronze
+  databricks_cli_version: '>= 0.218.0'
+
+include:
+  - resources/*.yml
+
+sync:
+  exclude:
+    - landing_files/**
+
+variables:
+  catalog:
+    description: Unity Catalog catalog for the environment
+  control_schema:
+    default: control
+  bronze_schema:
+    default: bronze
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://dbc-7e665065-c769.cloud.databricks.com/
+    variables:
+      catalog: dbt_project1_dev
+
+  prod:
+    mode: production
+    workspace:
+      host: https://dbc-7e665065-c769.cloud.databricks.com/
+      root_path: /Workspace/Shared/.bundle/${bundle.name}/${bundle.target}
+    run_as:
+      service_principal_name: "<PROD-SERVICE-PRINCIPAL-APPLICATION-ID>"
+    permissions:
+      - user_name: keerthan2406@gmail.com
+        level: CAN_MANAGE
+    variables:
+      catalog: dbt_project1_prod
+    resources:
+      jobs:
+        load_bronze_job:
+          schedule:
+            quartz_cron_expression: "0 0 6 * * ?"
+            timezone_id: Asia/Kolkata
+            pause_status: UNPAUSED
+          email_notifications:
+            on_failure:
+              - keerthan2406@gmail.com

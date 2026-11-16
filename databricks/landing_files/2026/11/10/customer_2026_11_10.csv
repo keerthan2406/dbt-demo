@@ -1,0 +1,35 @@
+customer_id,first_name,last_name,email,phone,city,country_code,segment,signup_date,updated_at
+C001,Aarav,Patel,aarav.patel@example.com,+91-9813356886,Mumbai,IN,Small Business,2025-05-21,2026-10-01 00:00:00
+C002,Diya,Iyer,diya.iyer@example.com,+91-9839958838,Hyderabad,IN,Retail,2026-01-13,2026-10-01 00:00:00
+C003,Rohan,Nair,rohan.nair@example.com,+91-9883197857,Pune,IN,Corporate,2025-10-30,2026-11-10 06:00:00
+C004,Meera,Singh,,+91-9814265799,Singapore,SG,Retail,2025-02-17,2026-10-01 00:00:00
+C005,Karan,Gupta,karan.gupta@example.com,+91-9841227216,Delhi,IN,Corporate,2025-11-05,2026-11-10 06:00:00
+C006,Anika,Mehta,N/A,+91-9885329037,Bengaluru,IN,Retail,2026-01-02,2026-10-01 00:00:00
+C007,Vihaan,Reddy,vihaan.reddy@example.com,+91-9839587039,Singapore,SG,Corporate,2025-10-29,2026-11-09 06:00:00
+C008,Isha,Das,isha.das@example.com,+91-9810872248,Pune,IN,Retail,2025-12-24,2026-10-01 00:00:00
+C009,Arjun,Khan,arjun.khan@example.com,,Mumbai,IN,Corporate,2025-03-21,2026-11-10 06:00:00
+C010,Sana,Sharma,sana.sharma@example.com,+91-9855176955,Hyderabad,IN,Retail,2025-02-17,2026-10-01 00:00:00
+C011,Rahul,Patel,rahul.patel@example.com,+91-9822981052,Singapore,SG,Corporate,2026-03-10,2026-10-01 00:00:00
+C012,Priya,Iyer,priya.iyer@example.com,,Chennai,IN,Corporate,2026-02-18,2026-11-09 06:00:00
+C013,Neil,Nair,neil.nair@example.com,+91-9871662963,Bengaluru,IN,Small Business,2025-03-05,2026-10-01 00:00:00
+C014,Tara,Singh,tara.singh@example.com,+91-9820576383,Singapore,SG,Small Business,2025-05-31,2026-10-01 00:00:00
+C015,  priya ,Gupta,dev.gupta@example.com,+91-9887490893,Chennai,IN,Retail,2025-12-27,2026-10-01 00:00:00
+C016,Zoya,SINGH,zoya.mehta@example.com,+91-9816150444,Mumbai,IN,Small Business,2025-04-27,2026-10-01 00:00:00
+C017,Aditya,Reddy,aditya.reddy@example.com,+91-9820709497,Pune,IN,Retail,2026-03-20,2026-10-01 00:00:00
+C018,Kavya,Das,  ZOYA.Khan@Example.COM ,+91-9861019678,Mumbai,IN,Corporate,2025-08-21,2026-10-01 00:00:00
+C019,Ishaan,Khan,ishaan.khan@example.com,+91-9831831063,Chennai,IN,Corporate,2025-07-01,2026-10-01 00:00:00
+C020,Riya,Sharma,riya.sharma@example.com,+91-9899949389,Hyderabad,IN,,2025-12-26,2026-10-01 00:00:00
+C021,Yash,Patel,yash.patel@example.com,+91-9891756179,Mumbai,IN,Small Business,2025-03-29,2026-10-01 00:00:00
+C022,Nisha,Iyer,nisha.iyer@example.com,+91-9831931511,Hyderabad,IN,retail,2025-07-14,2026-10-01 00:00:00
+C023,Varun,Nair,varun.nair@example.com,+91-9895899313,Pune,IN,Small Business,2025-10-13,2026-10-01 00:00:00
+C024,Pooja,Singh,pooja.singh@example.com,+91-9853524491,Hyderabad,IN,Retail,2025-04-28,2026-10-01 00:00:00
+C025,Sameer,Gupta,sameer.gupta@example.com,+91-9852339391,Bengaluru,in ,Corporate,2025-05-18,2026-10-01 00:00:00
+C026,Lena,Mehta,lena.mehta@example.com,+91-9838317637,Mumbai,IN,Small Business,2026-03-25,2026-10-01 00:00:00
+C027,Omar,Reddy,omar.reddy@example.com,+91-9838538251,Chennai,IN,Small Business,2025-09-13,2026-10-01 00:00:00
+C028,Mia,Das,mia.das@example.com,+91-9896282117,Singapore,SG,Corporate,2025-03-15,2026-10-01 00:00:00
+C029,Noah,Khan,noah.khan@example.com,+91-9828740864,Pune,IN,Retail,2026-01-17,2026-10-01 00:00:00
+C030,Ava,Sharma,ava.sharma@example.com,+91-9888461803,Pune,IN,Corporate,2026-04-05,2026-10-01 00:00:00
+C031,Ishaan,Mehta,new31@example.com,+91-9758586340,Mumbai,IN,Retail,2026-11-09,2026-11-09 06:00:00
+C032,Aditya,Reddy,,+91-9722201654,Bengaluru,IN,Retail,2026-11-09,2026-11-09 06:00:00
+C033,Karan,Iyer,new33@example.com,+91-9766661351,Pune,IN,Retail,2026-11-09,2026-11-09 06:00:00
+C034,Neil,Mehta,new34@example.com,+91-9789978790,Hyderabad,IN,Small Business,2026-11-10,2026-11-10 06:00:00
