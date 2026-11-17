@@ -18,8 +18,32 @@ CLEANED AS(
         _source_file,
         _ingested_at
     FROM ORDER
+),
+STATUS AS(
+    SELECT 
+        TRIM(LOWER(raw_status)) as raw_status,
+        clean_status
+    FROM {{ ref('order_status_map') }}
+),
+CLEANED_STATUS AS(
+    SELECT 
+        C.order_id,
+        C.customer_id,
+        C.store_id,
+        C.order_date,
+        S.clean_status as status,
+        C.discount_pct,
+        C.payment_method,
+        C.ship_date,
+        C.days_to_ship,
+        C._file_date,
+        C._source_file,
+        C._ingested_at
+    FROM CLEANED  C
+    LEFT JOIN STATUS  S
+    ON C.status = S.raw_status
 )
-SELECT * FROM CLEANED
+SELECT * FROM CLEANED_STATUS
 QUALIFY ROW_NUMBER() OVER(PARTITION BY order_id ORDER BY _ingested_at DESC) = 1
 
 {# tg_orders (main.raw.orders)

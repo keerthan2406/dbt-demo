@@ -59,4 +59,5 @@ O._source_file AS _source_file,
 O._file_date AS _file_date,
 O._ingested_at AS _ingested_at
 FROM ORDER_UNIT_PRICE O JOIN ORDER R ON O.order_id=R.order_id
+WHERE quantity IS NOT NULL AND unit_price IS NOT NULL AND quantity>0 AND unit_price>=0
 

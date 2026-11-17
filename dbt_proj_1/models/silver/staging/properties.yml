@@ -41,5 +41,56 @@ models:
           data_tests:
                 - not_null
                 - unique
+    - name: stg_orders
+      columns:
+        - name: order_id
+          data_tests:
+                - not_null
+                - unique
+        - name: status
+          data_tests:
+                - relationships:
+                    arguments:
+                        to: ref('order_status_map')
+                        field: clean_status
 
-                
+        - name: customer_id
+          data_tests:
+                - relationships:
+                    arguments:
+                        to: ref('stg_customers')
+                        field: customer_id
+        - name: store_id
+          data_tests:
+                - relationships:
+                    arguments:
+                        to: ref('stg_stores')
+                        field: store_id
+                    config:
+                        severity: warn
+        - name: ship_date
+          data_tests:
+                - date_not_before:
+                    compare_column: order_date
+    - name: stg_order_items
+      columns:
+        - name: order_id
+          data_tests:
+                - relationships:
+                    arguments:
+                        to: ref('stg_orders')
+                        field: order_id
+        - name: product_id
+          data_tests:
+                - relationships:
+                    arguments:
+                        to: ref('stg_products')
+                        field: product_id
+        - name: quantity
+          data_tests:
+                - not_null
+                - is_neg_number
+        - name: unit_price
+          data_tests:
+                - not_null
+                - is_neg_number
