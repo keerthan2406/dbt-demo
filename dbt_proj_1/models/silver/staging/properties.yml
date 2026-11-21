@@ -10,7 +10,8 @@ models:
         - name: email
           data_tests: 
                 - dbt_utils.expression_is_true:
-                    expression: " <> '' and upper(email) <> 'N/A'"
+                    arguments:
+                      expression: " <> '' and upper(email) <> 'N/A'"
         - name: country_code
           data_tests:
                 - relationships:

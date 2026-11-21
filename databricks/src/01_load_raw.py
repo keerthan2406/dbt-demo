@@ -118,11 +118,11 @@ for r in cfg:
           FORMAT_OPTIONS ('header' = '{HEADER}', 'delimiter' = '{DELIMITER}', 'inferSchema' = 'false')
           COPY_OPTIONS ('force' = 'true')""").first()
         inserted = int((res.asDict() if res else {}).get("num_inserted_rows") or 0)
-        log("RAW", 2, entity, r.target_table, "SUCCESS", t1, source_path=path, target=target,
+        log("BRONZE", 2, entity, r.target_table, "SUCCESS", t1, source_path=path, target=target,
             load_type=r.load_type, rows_read=src_rows, rows_written=inserted, rows_deleted=deleted)
         print(f"[SUCCESS] {entity:12s} table {action}; {inserted:>4} rows -> {target}")
     except Exception as e:
-        log("RAW", 2, entity, r.target_table, "FAILED", t1, source_path=path, target=target,
+        log("BRONZE", 2, entity, r.target_table, "FAILED", t1, source_path=path, target=target,
             load_type=r.load_type, rows_read=src_rows, error=e)
         failures.append(entity); print(f"[FAILED] {entity}: {e}")
 

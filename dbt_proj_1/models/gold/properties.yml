@@ -1,0 +1,98 @@
+version: 2
+
+models:
+  - name: dim_customers
+    description: "Customer dimension, SCD Type 2: one row per customer version (from snapshot customers_scd2)."
+    columns:
+      - name: customer_key
+        description: "Surrogate key from customer_id + valid_from."
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_id
+        data_tests:
+          - not_null
+      - name: valid_from
+        data_tests:
+          - not_null
+      - name: valid_to
+        data_tests:
+          - not_null
+      - name: is_current
+        data_tests:
+          - not_null
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "valid_from <= valid_to"
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [customer_id, valid_from]
+
+  - name: dim_products
+    description: "Product dimension, SCD Type 1: one row per product (latest values)."
+    columns:
+      - name: product_key
+        data_tests: [unique, not_null]
+      - name: product_id
+        data_tests: [unique, not_null]
+      - name: product_name
+        data_tests: [not_null]
+
+  - name: dim_stores
+    description: "Store dimension: one row per store."
+    columns:
+      - name: store_key
+        data_tests: [unique, not_null]
+      - name: store_id
+        data_tests: [unique, not_null]
+      - name: store_name
+        data_tests: [not_null]
+
+  - name: fct_orders
+    description: "One row per order; measures rolled up from order items."
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+      - name: customer_key
+        data_tests:
+          - relationships:
+              arguments: {to: ref('dim_customers'), field: customer_key}
+              config: {severity: warn}
+      - name: store_key
+        data_tests:
+          - relationships:
+              arguments: {to: ref('dim_stores'), field: store_key}
+              config: {severity: warn}
+      - name: order_date
+        data_tests: [not_null]
+      - name: is_revenue
+        data_tests: [not_null]
+
+  - name: fct_order_items
+    description: "One row per order line."
+    columns:
+      - name: order_item_id
+        data_tests: [unique, not_null]
+      - name: order_id
+        data_tests:
+          - relationships:
+              arguments: {to: ref('fct_orders'), field: order_id}
+      - name: product_key
+        data_tests:
+          - relationships:
+              arguments: {to: ref('dim_products'), field: product_key}
+              config: {severity: warn}
+
+  - name: daily_sales
+    description: "Daily sales by store region (revenue orders only)."
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [order_date, region]
+
+  - name: obt_sales
+    description: "One big table: order items with customer, product and store attributes."
+    columns:
+      - name: order_item_id
+        data_tests: [unique, not_null]
