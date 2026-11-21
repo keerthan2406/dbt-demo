@@ -1,0 +1,9 @@
+snapshots:
+  - name: customers_scd2
+    relation: ref('stg_customers')
+    config:
+      schema: silver
+      unique_key: customer_id
+      strategy: timestamp        # or: check, with check_cols: [email, city, segment]
+      updated_at: _file_date
+      hard_deletes: new_record   # ignore | invalidate | new_record

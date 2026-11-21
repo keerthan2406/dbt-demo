@@ -7,7 +7,8 @@ CLEANED AS(
     SELECT 
         TRIM(UPPER(order_id)) AS order_id,
         TRIM(UPPER(customer_id)) AS customer_id,
-        store_id,
+        TRIM(UPPER(store_id)) AS store_id,
+        CAST(order_ts AS TIMESTAMP) AS order_ts,
         TO_DATE(order_ts) as order_date,
         TRIM(LOWER(status)) as status,
         {{dbt.cast("discount_pct","decimal(18, 2)")}} as discount_pct,
@@ -22,7 +23,8 @@ CLEANED AS(
 STATUS AS(
     SELECT 
         TRIM(LOWER(raw_status)) as raw_status,
-        clean_status
+        clean_status,
+        CAST(is_revenue AS BOOLEAN) AS is_revenue
     FROM {{ ref('order_status_map') }}
 ),
 CLEANED_STATUS AS(
@@ -30,8 +32,10 @@ CLEANED_STATUS AS(
         C.order_id,
         C.customer_id,
         C.store_id,
+        C.order_ts,
         C.order_date,
         S.clean_status as status,
+        COALESCE(S.is_revenue, FALSE) AS is_revenue,
         C.discount_pct,
         C.payment_method,
         C.ship_date,
