@@ -77,9 +77,19 @@ uv sync
 cd dbt_proj_1
 dbt deps        # installs dbt_utils
 dbt seed
-dbt run
-dbt test
+dbt build --vars '{load_date: 2026-11-10, as_of_date: 2026-11-10, batch_id: <batch_id from the bronze job>}'
 ```
+
+Use `dbt build`, not `dbt run` followed by `dbt test`. `build` runs models, snapshots and tests in DAG order, so a failed test skips every downstream model.
+
+Vars:
+
+| Var | Used by | Notes |
+|---|---|---|
+| `load_date` | silver incremental `replace_where`, gate, control-table logging | Required. Falls back to `load_id`, then today, in the macros only |
+| `as_of_date` | `silver_orders`, `silver_order_items` incremental filter | Required, no default. The incremental models fail to compile without it |
+| `batch_id` | gate and control-table logging | The bronze job exits with its `batch_id`. Defaults to `manual_run` in logging |
+| `force_rerun` | `gate_bronze` | Set `true` to bypass the already-completed-through-GOLD stop |
 
 This needs a `dbt_proj_1` profile in your `profiles.yml` for the Databricks SQL warehouse. The bronze source reads from `{{ target.catalog }}.bronze`, so the profile must define `catalog`.
 
@@ -87,20 +97,58 @@ This needs a `dbt_proj_1` profile in your `profiles.yml` for the Databricks SQL 
 |---|---|---|---|
 | Sources | `models/bronze/bronze.yml` | – | `bronze` |
 | Staging | `models/silver/staging/` | view | `staging` |
-| Silver | `models/silver/` | table | `silver` |
+| Silver | `models/silver/` | table (orders, order_items, products are incremental) | `silver` |
+| Snapshot | `snapshots/customer_scd2.yml` | snapshot (timestamp on `_file_date`, hard deletes as new records) | `silver` |
 | Gold | `models/gold/` | table | `gold` |
 | Seeds | `seeds/` | table | `seeds` |
 
-The silver and gold layers are configured but have no models yet. The staging models are `stg_customers`, `stg_orders`, `stg_order_items`, `stg_products` and `stg_stores`. They trim and standardise case, cast types and dedupe on the business key by keeping the latest `_ingested_at`. Seeds are `country_region_map` and `order_status_map`.
+### Models
+
+- **Staging** (`stg_customers`, `stg_orders`, `stg_order_items`, `stg_products`, `stg_stores`): trim and standardise case, cast types, dedupe, map country to region and currency, and map order status through the seed (`clean_status`, `is_revenue`).
+- **Silver**: `silver_stores` (table), `silver_products` (incremental merge on `product_id`, SCD1), `silver_orders` and `silver_order_items` (incremental `replace_where` on `_file_date`). `customers_scd2` is the SCD2 snapshot of `stg_customers`.
+- **Gold dimensions**: `dim_customers` (SCD2, one row per customer version with `valid_from`, `valid_to`, `is_current`, `is_deleted`), `dim_products` (SCD1), `dim_stores`. Surrogate keys use `dbt_utils.generate_surrogate_key`.
+- **Gold facts and marts**:
+  - `fct_orders`: one row per order; measures rolled up from order items; `customer_key` is a point-in-time lookup.
+  - `fct_order_items`: one row per order line, with gross, discount, net, cost, profit and `margin_pct`.
+  - `daily_sales`: by `order_date` and store region; revenue orders only (`is_revenue`).
+  - `obt_sales`: `fct_order_items` joined to customer, product and store attributes.
+- **Seeds**: `country_region_map`, `order_status_map`.
 
 `macros/generate_schema_name.sql` overrides schema naming.
 
+First run after the order model changes: run `silver_orders` once with `--full-refresh` so the incremental table picks up the new `order_ts` and `is_revenue` columns.
+
+### Run gating and audit logging
+
+No model or test hooks are used. Two project-level hooks in `dbt_project.yml` handle it:
+
+- **`on-run-start`: `gate_bronze()`** (`macros/gate_bronze.sql`)
+  - Fails the run if there is no BRONZE batch for `load_date`, or if the latest batch has any non-SUCCESS entity.
+  - Stops the run if every BRONZE entity in the batch already has a GOLD SUCCESS logged after the bronze load finished. Bypass with `force_rerun`.
+- **`on-run-end`: `log_run_results(results)`** (`macros/log_run_results.sql`) writes one row per model, seed and test to `control.control_load_history`.
+
+| Layer value | Seq | Rows |
+|---|---|---|
+| `STAGING` | 4 | models under `staging` |
+| `SILVER` | 5 | other silver models |
+| `GOLD` | 6 | gold models |
+| `TEST` | 7 | data tests |
+
+Status is `SUCCESS`, `FAILED`, `WARN` or `SKIPPED`. For tests, `rows_read` holds the failure count. Entity names drop the `stg_`, `silver_`, `dim_` and `fct_` prefixes so they match the bronze entity names.
+
+dbt does not run hooks on tests, which is why test results are logged from `on-run-end` and not per test.
+
 ### Data tests
 
-Defined in `models/silver/staging/properties.yml`:
+Staging tests, in `models/silver/staging/properties.yml`:
 
 - `stg_customers`: `customer_id` not null and unique. `email` is non-empty and not `N/A` (`dbt_utils.expression_is_true`). `country_code` must exist in `country_region_map`.
 - `stg_products`: `product_id` not null and unique. `category` not null (warn only). `unit_cost` and `unit_price` pass the custom generic test `is_neg_number`.
 - `stg_stores`: `store_id` not null and unique.
+
+Gold tests, in `models/gold/properties.yml`:
+
+- Dimensions: surrogate keys and business ids are unique and not null. `dim_customers` also checks `valid_from <= valid_to` and uniqueness of `customer_id` plus `valid_from`.
+- Facts: `order_id` and `order_item_id` are unique and not null. Customer, store and product keys have `relationships` tests (warn only), because orphan records such as customer `C999` are kept. `daily_sales` is unique on `order_date` plus `region`.
 
 `is_neg_number` (`tests/generic/is_neg_number.sql`) fails on rows where the column is negative. NULLs are ignored.
