@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS {catalog}.{ctrl_schema}.control_load_history (
   batch_id          STRING,
   dbt_invocation_id STRING,
   load_date         DATE,
-  layer             STRING COMMENT 'LANDING | RAW | SEED | STAGING | SNAPSHOT | GOLD | DQ_TEST',
+  layer             STRING COMMENT 'LANDING | BRONZE | STAGING | SILVER | GOLD | TEST',
   layer_seq         INT,
   entity_name       STRING,
   object_name       STRING COMMENT 'file name, raw table or dbt node',

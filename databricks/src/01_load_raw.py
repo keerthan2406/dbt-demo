@@ -1,6 +1,6 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # 01 - Load landing CSVs into RAW (metadata driven)
+# MAGIC # 01 - Load landing CSVs into BRONZE (metadata driven)
 # MAGIC * Reads `control_file_extract` (active rows, by `load_order`)
 # MAGIC * Replaces `{YYYY}` `{MM}` `{DD}` `{catalog}` using the `load_date` / `catalog` widgets
 # MAGIC * Creates the `bronze` schema if missing

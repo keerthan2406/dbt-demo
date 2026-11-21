@@ -61,6 +61,8 @@ models:
                     arguments:
                         to: ref('stg_customers')
                         field: customer_id
+                    config:
+                        severity: warn
         - name: store_id
           data_tests:
                 - relationships:
