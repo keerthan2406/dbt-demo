@@ -3,7 +3,10 @@
   {% if not execute %}{{ return('') }}{% endif %}
 
   {% set load_date = var('load_date', var('load_id', run_started_at.strftime('%Y-%m-%d'))) %}
-  {% set batch_id = var('batch_id', 'manual_run') %}
+  {# batch_id: latest BRONZE batch for load_date from the control table (non-raising) #}
+  {% set batch_id = 'manual_run' %}
+  {% set bq = run_query("SELECT batch_id FROM control.control_load_history WHERE load_date = CAST('" ~ load_date ~ "' AS DATE) AND UPPER(layer) = 'BRONZE' ORDER BY ended_at DESC LIMIT 1") %}
+  {% if bq and bq.rows | length > 0 %}{% set batch_id = bq.rows[0][0] %}{% endif %}
 
   {% set status_map = {'success':'SUCCESS','pass':'SUCCESS','fail':'FAILED','error':'FAILED','warn':'WARN','skipped':'SKIPPED'} %}
   {% set rows = [] %}

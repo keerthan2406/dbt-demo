@@ -77,19 +77,15 @@ uv sync
 cd dbt_proj_1
 dbt deps        # installs dbt_utils
 dbt seed
-dbt build --vars '{load_date: 2026-11-10, as_of_date: 2026-11-10, batch_id: <batch_id from the bronze job>}'
+dbt build --vars '{load_date: 2026-11-10}'
 ```
 
 Use `dbt build`, not `dbt run` followed by `dbt test`. `build` runs models, snapshots and tests in DAG order, so a failed test skips every downstream model.
 
-Vars:
+The only var is `load_date`. It is required by the silver incremental `replace_where` predicates, the gate and the control-table logging. The other values are derived:
 
-| Var | Used by | Notes |
-|---|---|---|
-| `load_date` | silver incremental `replace_where`, gate, control-table logging | Required. Falls back to `load_id`, then today, in the macros only |
-| `as_of_date` | `silver_orders`, `silver_order_items` incremental filter | Required, no default. The incremental models fail to compile without it |
-| `batch_id` | gate and control-table logging | The bronze job exits with its `batch_id`. Defaults to `manual_run` in logging |
-| `force_rerun` | `gate_bronze` | Set `true` to bypass the already-completed-through-GOLD stop |
+- **as_of_date:** the incremental silver models (`silver_orders`, `silver_order_items`) filter on `max(_file_date)` from the staging model, i.e. the file just loaded.
+- **batch_id:** read from `control.control_load_history` (latest BRONZE batch for `load_date`), not passed in.
 
 This needs a `dbt_proj_1` profile in your `profiles.yml` for the Databricks SQL warehouse. The bronze source reads from `{{ target.catalog }}.bronze`, so the profile must define `catalog`.
 
@@ -124,7 +120,7 @@ No model or test hooks are used. Two project-level hooks in `dbt_project.yml` ha
 
 - **`on-run-start`: `gate_bronze()`** (`macros/gate_bronze.sql`)
   - Fails the run if there is no BRONZE batch for `load_date`, or if the latest batch has any non-SUCCESS entity.
-  - Stops the run if every BRONZE entity in the batch already has a GOLD SUCCESS logged after the bronze load finished. Bypass with `force_rerun`.
+  - Stops the run if every BRONZE entity in the batch already has a GOLD SUCCESS logged after the bronze load finished.
 - **`on-run-end`: `log_run_results(results)`** (`macros/log_run_results.sql`) writes one row per model, seed and test to `control.control_load_history`.
 
 | Layer value | Seq | Rows |

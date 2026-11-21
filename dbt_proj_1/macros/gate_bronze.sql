@@ -9,7 +9,6 @@
     FROM control.control_load_history
     WHERE load_date = CAST('{{ load_date }}' AS DATE)
       AND UPPER(layer) = 'BRONZE'
-      {% if var('batch_id', none) %}AND batch_id = '{{ var("batch_id") }}'{% endif %}
     GROUP BY batch_id
     ORDER BY last_end DESC
     LIMIT 1
@@ -29,8 +28,8 @@
     {{ log("Bronze gate passed, batch_id=" ~ b, info=True) }}
 
     {# Already-complete check: every BRONZE entity in this batch already has a GOLD SUCCESS
-       logged after the bronze load finished -> nothing left to do. Override: --vars '{force_rerun: true}' #}
-    {% if not var('force_rerun', false) %}
+       logged after the bronze load finished -> nothing left to do. #}
+    {% if true %}
       {% set load_date = var('load_date', var('load_id', run_started_at.strftime('%Y-%m-%d'))) %}
       {% set q %}
         WITH br AS (
@@ -54,7 +53,7 @@
       {% set res = run_query(q) %}
       {% if res and res.rows | length > 0 and res.rows[0][0] | int > 0
             and res.rows[0][0] | int == (res.rows[0][1] or 0) | int %}
-        {{ exceptions.raise_compiler_error("GATE STOP: all " ~ res.rows[0][0] ~ " entities for load_date=" ~ load_date ~ " (batch " ~ b ~ ") already completed through GOLD. Use --vars '{force_rerun: true}' to rerun.") }}
+        {{ exceptions.raise_compiler_error("GATE STOP: all " ~ res.rows[0][0] ~ " entities for load_date=" ~ load_date ~ " (batch " ~ b ~ ") already completed through GOLD.") }}
       {% endif %}
     {% endif %}
   {% endif %}
