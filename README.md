@@ -120,7 +120,8 @@ No model or test hooks are used. Two project-level hooks in `dbt_project.yml` ha
 
 - **`on-run-start`: `gate_bronze()`** (`macros/gate_bronze.sql`)
   - Fails the run if there is no BRONZE batch for `load_date`, or if the latest batch has any non-SUCCESS entity.
-  - Fails the run if `load_date` is not the newest BRONZE `load_date` in the control table, or if any bronze table holds a `_file_date` other than `load_date`. Bronze is truncated and reloaded, so only the latest date can be processed.
+  - Uses the latest processed batch (max `ended_at`) for the given `load_date`. `load_date` can be any date.
+  - Fails the run if any bronze table holds a `_file_date` other than `load_date`. Bronze is truncated and reloaded, so it only holds the last loaded file; to process an older date, rerun the bronze job for that date first.
   - Stops the run if every BRONZE entity in the batch already has a GOLD SUCCESS logged after the bronze load finished.
 - **`on-run-end`: `log_run_results(results)`** (`macros/log_run_results.sql`) writes one row per model, seed and test to `control.control_load_history`.
 
