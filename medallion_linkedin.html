@@ -1,0 +1,304 @@
+<title>Medallion Pipeline Post</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+  /* Layout: one wide architecture figure on top, the post draft in a single reading column below. */
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --fg: #16202b;
+    --muted: #5b6672;
+    --line: #c9d0d8;
+    --accent: #1d5fd1;
+    --accent-soft: #e6eefb;
+    --bronze: #a8632c;
+    --silver: #5f7285;
+    --gold: #a77c0c;
+    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-head: "Space Grotesk", "Inter", system-ui, sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f151c;
+      --surface: #17202a;
+      --fg: #e8edf2;
+      --muted: #9aa7b4;
+      --line: #35424f;
+      --accent: #6aa2ff;
+      --accent-soft: #1b2a44;
+      --bronze: #d99a63;
+      --silver: #9db0c2;
+      --gold: #e0b94a;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f151c;
+    --surface: #17202a;
+    --fg: #e8edf2;
+    --muted: #9aa7b4;
+    --line: #35424f;
+    --accent: #6aa2ff;
+    --accent-soft: #1b2a44;
+    --bronze: #d99a63;
+    --silver: #9db0c2;
+    --gold: #e0b94a;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.55;
+    padding-block: 32px 56px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  main { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; }
+  h1, h2 { font-family: var(--font-head); text-wrap: balance; margin: 0; }
+  h1 { font-size: 28px; line-height: 1.15; }
+  h2 { font-size: 18px; }
+  .lede { color: var(--muted); margin: 8px 0 0; max-width: 65ch; }
+  section { display: flex; flex-direction: column; gap: 14px; }
+
+  figure { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .scroll { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px; }
+  .scroll svg { display: block; width: 100%; min-width: 860px; height: auto; color: var(--fg); }
+  figcaption { color: var(--muted); font-size: 13px; max-width: 80ch; }
+
+  /* diagram marks */
+  .box { fill: var(--surface); stroke-width: 2; }
+  .b-land { stroke: var(--muted); }
+  .b-job { stroke: var(--accent); }
+  .b-bronze { stroke: var(--bronze); }
+  .b-silver { stroke: var(--silver); }
+  .b-gold { stroke: var(--gold); }
+  .t-title { font: 600 14px var(--font-head); fill: var(--fg); }
+  .t-body { font: 400 11.5px var(--font-body); fill: var(--muted); }
+  .t-label { font: 500 11px var(--font-body); fill: var(--muted); }
+  .t-band { font: 600 11px var(--font-body); fill: var(--muted); letter-spacing: .08em; }
+  .t-strong { font: 600 13px var(--font-head); fill: var(--fg); }
+  .flow { stroke: var(--fg); stroke-width: 1.6; fill: none; }
+  .ctl { stroke: var(--accent); stroke-width: 1.6; fill: none; }
+  .ctl-dash { stroke: var(--accent); stroke-width: 1.6; fill: none; stroke-dasharray: 5 4; }
+  .band-line { stroke: var(--line); stroke-width: 1.5; }
+  .hook { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+  .ctlbox { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; }
+  .seed { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 4 3; }
+  .chip { fill: none; stroke: var(--line); stroke-width: 1.5; }
+  .arrow-fill { fill: var(--fg); }
+  .arrow-accent { fill: var(--accent); }
+
+  /* post draft */
+  .post-wrap { display: flex; flex-direction: column; gap: 12px; }
+  .post {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 22px 24px;
+    white-space: pre-wrap;
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 68ch;
+  }
+  .bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  button {
+    font: 600 13px var(--font-body);
+    background: var(--accent);
+    color: #fff;
+    border: 0;
+    border-radius: 8px;
+    padding: 9px 16px;
+    cursor: pointer;
+  }
+  button:focus-visible { outline: 3px solid var(--fg); outline-offset: 2px; }
+  #copy-status { color: var(--muted); font-size: 13px; }
+  .tips { color: var(--muted); font-size: 13px; max-width: 68ch; margin: 0; padding-left: 18px; }
+</style>
+
+<body>
+<main>
+  <header>
+    <h1>Medallion pipeline: Databricks bundle + dbt</h1>
+    <p class="lede">A LinkedIn post draft and the architecture image to go with it. Screenshot the diagram for the post image.</p>
+  </header>
+
+  <section>
+    <h2>Architecture image</h2>
+    <figure>
+      <div class="scroll">
+        <svg viewBox="0 0 1200 690" role="img" aria-label="Daily CSVs in a Unity Catalog volume are loaded to bronze tables by a Databricks bundle job, which logs to a control table. dbt checks that table at run start, builds staging, silver and gold, and logs every model and test back to it at run end.">
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" class="arrow-fill"/>
+            </marker>
+            <marker id="arr-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" class="arrow-accent"/>
+            </marker>
+          </defs>
+
+          <!-- tool bands -->
+          <line class="band-line" x1="30" y1="58" x2="570" y2="58"/>
+          <text class="t-band" x="30" y="44">DATABRICKS ASSET BUNDLE</text>
+          <line class="band-line" x1="630" y1="58" x2="1170" y2="58"/>
+          <text class="t-band" x="630" y="44">DBT PROJECT  (dbt build)</text>
+
+          <!-- row 1 boxes -->
+          <rect class="box b-land" x="30" y="100" width="140" height="150" rx="8"/>
+          <text class="t-title" x="46" y="130">Landing volume</text>
+          <text class="t-body" x="46" y="156">Unity Catalog volume</text>
+          <text class="t-body" x="46" y="176">daily CSV files</text>
+          <text class="t-body" x="46" y="196">YYYY/MM/DD/</text>
+
+          <rect class="box b-job" x="230" y="100" width="140" height="150" rx="8"/>
+          <text class="t-title" x="246" y="130">Bundle job</text>
+          <text class="t-body" x="246" y="156">01_load_raw.py</text>
+          <text class="t-body" x="246" y="176">control-driven</text>
+          <text class="t-body" x="246" y="196">COPY INTO</text>
+          <text class="t-body" x="246" y="216">dev / prod targets</text>
+
+          <rect class="box b-bronze" x="430" y="100" width="140" height="150" rx="8"/>
+          <text class="t-title" x="446" y="130">Bronze</text>
+          <text class="t-body" x="446" y="156">all STRING columns</text>
+          <text class="t-body" x="446" y="176">+ audit columns</text>
+          <text class="t-body" x="446" y="196">truncate + reload</text>
+
+          <rect class="box b-silver" x="630" y="100" width="140" height="150" rx="8"/>
+          <text class="t-title" x="646" y="130">Staging</text>
+          <text class="t-body" x="646" y="156">views</text>
+          <text class="t-body" x="646" y="176">trim, case, dedupe</text>
+          <text class="t-body" x="646" y="196">cast + map seeds</text>
+          <text class="t-body" x="646" y="216">staging tests</text>
+
+          <rect class="box b-silver" x="830" y="100" width="140" height="150" rx="8"/>
+          <text class="t-title" x="846" y="130">Silver</text>
+          <text class="t-body" x="846" y="156">append by file date</text>
+          <text class="t-body" x="846" y="176">SCD1 merge</text>
+          <text class="t-body" x="846" y="196">SCD2 snapshot</text>
+          <text class="t-body" x="846" y="216">silver tests</text>
+
+          <rect class="box b-gold" x="1030" y="100" width="140" height="150" rx="8"/>
+          <text class="t-title" x="1046" y="130">Gold</text>
+          <text class="t-body" x="1046" y="156">dim tables</text>
+          <text class="t-body" x="1046" y="176">fct_orders, items</text>
+          <text class="t-body" x="1046" y="196">daily_sales, OBT</text>
+          <text class="t-body" x="1046" y="216">gold tests</text>
+
+          <!-- row 1 flow arrows -->
+          <line class="flow" x1="170" y1="175" x2="228" y2="175" marker-end="url(#arr)"/>
+          <text class="t-label" x="200" y="167" text-anchor="middle">read</text>
+          <line class="flow" x1="370" y1="175" x2="428" y2="175" marker-end="url(#arr)"/>
+          <text class="t-label" x="400" y="167" text-anchor="middle">load</text>
+          <line class="flow" x1="570" y1="175" x2="628" y2="175" marker-end="url(#arr)"/>
+          <text class="t-label" x="600" y="167" text-anchor="middle">source()</text>
+          <line class="flow" x1="770" y1="175" x2="828" y2="175" marker-end="url(#arr)"/>
+          <text class="t-label" x="800" y="167" text-anchor="middle">ref()</text>
+          <line class="flow" x1="970" y1="175" x2="1028" y2="175" marker-end="url(#arr)"/>
+          <text class="t-label" x="1000" y="167" text-anchor="middle">ref()</text>
+
+          <!-- row 2: seeds and hooks -->
+          <rect class="seed" x="630" y="300" width="140" height="56" rx="8"/>
+          <text class="t-strong" x="646" y="324">Seeds</text>
+          <text class="t-body" x="646" y="343">country + status maps</text>
+          <line class="flow" x1="700" y1="298" x2="700" y2="252" marker-end="url(#arr)"/>
+          <text class="t-label" x="708" y="282">join</text>
+
+          <rect class="hook" x="400" y="300" width="200" height="56" rx="8"/>
+          <text class="t-strong" x="414" y="322">on-run-start: gate</text>
+          <text class="t-body" x="414" y="342">stops dbt if bronze not SUCCESS</text>
+          <line class="ctl-dash" x1="500" y1="298" x2="500" y2="252" marker-end="url(#arr-a)"/>
+          <text class="t-label" x="508" y="282">checks _file_date</text>
+
+          <rect class="hook" x="830" y="300" width="340" height="56" rx="8"/>
+          <text class="t-strong" x="844" y="322">on-run-end: log_run_results</text>
+          <text class="t-body" x="844" y="342">one row per model, seed and test: status, rows, duration</text>
+
+          <!-- bundle -> control table -->
+          <line class="ctl" x1="300" y1="252" x2="300" y2="466" marker-end="url(#arr-a)"/>
+          <text class="t-label" x="310" y="400">logs LANDING + BRONZE</text>
+
+          <!-- control table band -->
+          <rect class="ctlbox" x="30" y="470" width="1140" height="70" rx="10"/>
+          <text class="t-strong" x="50" y="498">control.control_load_history</text>
+          <text class="t-body" x="50" y="520">One row per entity, layer, status and batch_id. The bundle writes LANDING and BRONZE; dbt writes STAGING, SILVER, GOLD and TEST.</text>
+
+          <!-- control -> gate, dbt -> control -->
+          <line class="ctl" x1="460" y1="468" x2="460" y2="358" marker-end="url(#arr-a)"/>
+          <text class="t-label" x="468" y="420">reads latest batch</text>
+          <line class="ctl" x1="1000" y1="358" x2="1000" y2="466" marker-end="url(#arr-a)"/>
+          <text class="t-label" x="1010" y="420">logs STAGING / SILVER / GOLD / TEST</text>
+
+          <!-- foot chips -->
+          <rect class="chip" x="30" y="580" width="360" height="62" rx="8"/>
+          <text class="t-strong" x="46" y="606">Environments</text>
+          <text class="t-body" x="46" y="627">dev and prod targets, separate catalogs, prod scheduled</text>
+
+          <rect class="chip" x="420" y="580" width="360" height="62" rx="8"/>
+          <text class="t-strong" x="436" y="606">Quality gates</text>
+          <text class="t-body" x="436" y="627">tests per layer, custom generic tests, failed test skips downstream</text>
+
+          <rect class="chip" x="810" y="580" width="360" height="62" rx="8"/>
+          <text class="t-strong" x="826" y="606">Git + CI/CD ready</text>
+          <text class="t-body" x="826" y="627">branches and PRs; same code deploys to dev or prod</text>
+        </svg>
+      </div>
+      <figcaption>Bronze is loaded by a Databricks bundle job that logs to a control table. dbt reads that table before it starts, builds staging, silver and gold in order, and logs every model and test result back to the same table when it finishes.</figcaption>
+    </figure>
+  </section>
+
+  <section class="post-wrap">
+    <h2>Post draft</h2>
+    <div class="post" id="post">I built a metadata-driven medallion pipeline on Databricks and dbt. The part that taught me the most was not the models. It was the control table.
+
+How it works:
+
+1. A Databricks Asset Bundle job reads a config table and loads daily CSVs from a Unity Catalog volume into bronze tables (COPY INTO, all columns as strings, audit columns added).
+2. Every load is logged to a control table: entity, layer, status, batch id, rows, duration.
+3. dbt does not start until that table says bronze succeeded. An on-run-start macro checks the latest batch for the load date and stops the run if anything is missing or failed.
+4. dbt cleans the data in staging (trim, standardise, dedupe, map codes with seeds), then handles history in silver: append, SCD1 merge, and SCD2 with a dbt snapshot.
+5. Gold has the dimensions, facts, a daily sales table and one big table for BI.
+6. An on-run-end macro writes every model and test result back to the same control table.
+
+Quality checks run at every layer: not_null, unique, relationships, custom generic tests, and dbt_utils tests. With dbt build, a failed test skips everything downstream.
+
+Built to ship: everything lives in Git (branches and pull requests), and the bundle has separate dev and prod targets with their own catalogs. The same code is ready to promote through a CI/CD pipeline, with prod running on a schedule.
+
+What would you add to a setup like this?
+
+#dbt #Databricks #DataEngineering #MedallionArchitecture #DeltaLake #AnalyticsEngineering</div>
+    <div class="bar">
+      <button type="button" id="copy-btn">Copy post text</button>
+      <span id="copy-status" role="status"></span>
+    </div>
+    <ul class="tips">
+      <li>Attach the architecture image above as the post image.</li>
+      <li>The post says "ready to promote through a CI/CD pipeline". The repo has no pipeline files yet, so avoid saying CI/CD is running unless it is set up.</li>
+      <li>Check that nothing in the image or text exposes client data, workspace URLs or emails.</li>
+    </ul>
+  </section>
+</main>
+
+<script>
+  var btn = document.getElementById('copy-btn');
+  var status = document.getElementById('copy-status');
+  btn.addEventListener('click', function () {
+    var text = document.getElementById('post').innerText;
+    var done = function (msg) { status.textContent = msg; };
+    try {
+      navigator.clipboard.writeText(text).then(function () { done('Copied.'); }, function () { select(); });
+    } catch (e) { select(); }
+    function select() {
+      var r = document.createRange();
+      r.selectNodeContents(document.getElementById('post'));
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      done('Text selected. Press Ctrl+C to copy.');
+    }
+  });
+</script>
+</body>
