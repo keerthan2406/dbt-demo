@@ -254,7 +254,9 @@
 
   <section class="post-wrap">
     <h2>Post draft</h2>
-    <div class="post" id="post">I built a metadata-driven medallion pipeline on Databricks and dbt. The part that taught me the most was not the models. It was the control table.
+    <div class="post" id="post">I built a metadata-driven medallion pipeline on Databricks and dbt. What ties it together is a control table that every step reads from and writes to.
+
+The goal was to take daily files from a landing volume to analytics-ready tables, with history, tests and an audit trail at every step. Ingestion runs as a Databricks job, transformation runs in dbt, and the two only talk to each other through that table. That keeps each side simple and makes every run easy to trace.
 
 How it works:
 

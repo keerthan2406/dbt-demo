@@ -16,25 +16,27 @@ variables:
     default: control
   bronze_schema:
     default: bronze
+  notify_email:
+    description: Owner / failure-notification email (set BUNDLE_VAR_notify_email, see .env.example)
+    default: you@example.com
 
+# Workspace host is not stored here. Set DATABRICKS_HOST (see .env.example)
+# or use a Databricks CLI profile (databricks auth login).
 targets:
   dev:
     mode: development
     default: true
-    workspace:
-      host: https://dbc-7e665065-c769.cloud.databricks.com/
     variables:
       catalog: dbt_project1_dev
 
   prod:
     mode: production
     workspace:
-      host: https://dbc-7e665065-c769.cloud.databricks.com/
       root_path: /Workspace/Shared/.bundle/${bundle.name}/${bundle.target}
     run_as:
       service_principal_name: "<PROD-SERVICE-PRINCIPAL-APPLICATION-ID>"
     permissions:
-      - user_name: keerthan2406@gmail.com
+      - user_name: ${var.notify_email}
         level: CAN_MANAGE
     variables:
       catalog: dbt_project1_prod
@@ -47,4 +49,4 @@ targets:
             pause_status: UNPAUSED
           email_notifications:
             on_failure:
-              - keerthan2406@gmail.com
+              - ${var.notify_email}

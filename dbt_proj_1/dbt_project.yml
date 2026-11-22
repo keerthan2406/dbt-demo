@@ -49,7 +49,12 @@ models:
     gold:
       +materialized: table
       +schema: gold
- 
+      # UniForm: publish Iceberg metadata so Snowflake can read gold through Unity Catalog's Iceberg REST endpoint
+      +tblproperties:
+        delta.columnMapping.mode: name
+        delta.enableIcebergCompatV2: 'true'
+        delta.universalFormat.enabledFormats: iceberg
+
 seeds:
   dbt_proj_1:
     +schema: seeds
