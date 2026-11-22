@@ -1,14 +1,24 @@
 -- =====================================================================
 -- Snowflake setup: read the Databricks gold layer as Iceberg tables
--- Run in Cortex Code (CoCo), Snowsight, or any Snowflake SQL client.
+--
+-- Values come from environment variables (see .env.example), so no host,
+-- catalog or secret is stored in this file. Run it with the Snowflake CLI,
+-- which renders the template variables from your environment:
+--   set -a; source .env; set +a
+--   snow sql -f Snowflake/01_setup_gold_iceberg.sql
+--
+-- Environment variables used:
+--   DBT_DATABRICKS_HOST               Databricks host, no https:// (existing dbt variable)
+--   DBT_DATABRICKS_CATALOG            Unity Catalog catalog name (existing dbt variable)
+--   UC_SERVICE_PRINCIPAL_CLIENT_ID    service principal OAuth client id
+--   UC_SERVICE_PRINCIPAL_SECRET       service principal OAuth secret
 --
 -- Prerequisites (Databricks side):
 --   1. dbt build has run, so gold tables publish Iceberg metadata (UniForm).
 --   2. External data access is enabled on the Unity Catalog metastore.
---   3. A service principal has EXTERNAL USE SCHEMA and SELECT on
---      <uc_catalog>.gold, with an OAuth client id and secret.
+--   3. The service principal has EXTERNAL USE SCHEMA and SELECT on the
+--      gold schema of that catalog.
 --
--- Replace every <placeholder>. Never commit real secrets to Git.
 -- Syntax for REST catalog integrations changes between Snowflake releases;
 -- check the current docs if a clause is rejected.
 -- =====================================================================
@@ -28,28 +38,26 @@ USE WAREHOUSE demo_wh;
 USE SCHEMA demo_gold.gold;
 
 -- 2) Catalog integration to Databricks Unity Catalog -------------------
---    <workspace-host>  e.g. dbc-xxxxxxxx-xxxx.cloud.databricks.com
---    <uc-catalog>      the Unity Catalog catalog name (dbt target catalog)
 CREATE OR REPLACE CATALOG INTEGRATION uc_gold_int
   CATALOG_SOURCE    = ICEBERG_REST
   TABLE_FORMAT      = ICEBERG
   CATALOG_NAMESPACE = 'gold'
   REST_CONFIG = (
-    CATALOG_URI            = 'https://<workspace-host>/api/2.1/unity-catalog/iceberg-rest'
-    WAREHOUSE              = '<uc-catalog>'
+    CATALOG_URI            = 'https://<% ctx.env.DBT_DATABRICKS_HOST %>/api/2.1/unity-catalog/iceberg-rest'
+    WAREHOUSE              = '<% ctx.env.DBT_DATABRICKS_CATALOG %>'
     ACCESS_DELEGATION_MODE = VENDED_CREDENTIALS
   )
   REST_AUTHENTICATION = (
     TYPE                 = OAUTH
-    OAUTH_TOKEN_URI      = 'https://<workspace-host>/oidc/v1/token'
-    OAUTH_CLIENT_ID      = '<service-principal-client-id>'
-    OAUTH_CLIENT_SECRET  = '<service-principal-secret>'
+    OAUTH_TOKEN_URI      = 'https://<% ctx.env.DBT_DATABRICKS_HOST %>/oidc/v1/token'
+    OAUTH_CLIENT_ID      = '<% ctx.env.UC_SERVICE_PRINCIPAL_CLIENT_ID %>'
+    OAUTH_CLIENT_SECRET  = '<% ctx.env.UC_SERVICE_PRINCIPAL_SECRET %>'
     OAUTH_ALLOWED_SCOPES = ('all-apis')
   )
   ENABLED = TRUE;
 
--- Alternative auth (personal access token), replace REST_AUTHENTICATION above with:
---   REST_AUTHENTICATION = (TYPE = BEARER BEARER_TOKEN = '<databricks-pat>')
+-- Alternative auth: use a personal access token (variable UC_PAT) instead of OAuth by
+-- replacing the REST_AUTHENTICATION block above with a BEARER type block.
 
 -- 3) Iceberg tables over the gold layer --------------------------------
 CREATE OR REPLACE ICEBERG TABLE dim_customers
